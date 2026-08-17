@@ -21,26 +21,17 @@ function extractLabeledLine(description, label) {
   return match ? match[1].trim() : null;
 }
 
-// For Stage/Voice events (no Location field), everything comes from labeled
-// lines in the Description instead, e.g.:
-//   Flight Number: KE 497
+// For Stage/Voice events (no Location field), the route and aircraft come
+// from labeled lines in the Description instead, e.g.:
 //   Departing: Seoul (ICN), South Korea
 //   Arriving: Delhi (DEL), India
 //   Aircraft: B787-9 Dreamliner
-//   Duration: 7H 45M
-//   Meal: Lunch
-//   Cabin Classes: Economy & Business
-// (Flight Number is read from the event's Name field regardless, so that
-// line is optional/purely informational if included.)
 function parseDescriptionFields(description) {
   if (!description) return {};
   return {
     departing: extractLabeledLine(description, 'Departing'),
     arriving: extractLabeledLine(description, 'Arriving'),
     aircraft: extractLabeledLine(description, 'Aircraft'),
-    duration: extractLabeledLine(description, 'Duration'),
-    meal: extractLabeledLine(description, 'Meal'),
-    cabinClasses: extractLabeledLine(description, 'Cabin Classes'),
   };
 }
 
@@ -50,23 +41,17 @@ function toRecord(discordEvent) {
   let origin;
   let destination;
   let aircraft;
-  let duration = null;
-  let meal = null;
-  let cabinClasses = null;
 
   if (location) {
     // "Someplace Else" event: Location holds the route, Description is just the aircraft.
     ({ origin, destination } = parseRoute(location));
     aircraft = discordEvent.description?.trim() || 'Unknown';
   } else {
-    // Stage/Voice event: everything comes from labeled Description lines.
+    // Stage/Voice event: route and aircraft come from labeled Description lines.
     const parsed = parseDescriptionFields(discordEvent.description);
     origin = parsed.departing || 'Unknown';
     destination = parsed.arriving || 'Unknown';
     aircraft = parsed.aircraft || 'Unknown';
-    duration = parsed.duration;
-    meal = parsed.meal;
-    cabinClasses = parsed.cabinClasses;
   }
 
   return {
@@ -76,9 +61,6 @@ function toRecord(discordEvent) {
     origin,
     destination,
     aircraft,
-    duration,
-    meal,
-    cabinClasses,
     scheduledStart: discordEvent.scheduledStartAt ? discordEvent.scheduledStartAt.toISOString() : null,
     status: discordEvent.status,
     creatorTag: discordEvent.creator?.username || 'Unknown',

@@ -12,9 +12,6 @@ const EMOJI = {
   departure: '<:Emoji22:1538217910454063205>',
   cancelled: '<:Emoji27:1538218104734220370>',
   delayed: '<:Emoji28:1538218156475027476>',
-  duration: '⏱️', // pending real emoji code
-  meal: '🍽️', // pending real emoji code
-  cabinClasses: '💺', // pending real emoji code
 };
 
 function isDelayed(record) {
@@ -22,30 +19,14 @@ function isDelayed(record) {
   return new Date(record.scheduledStart).getTime() > new Date(record.originalScheduledStart).getTime();
 }
 
-// Duration/meal/cabin classes only exist for Stage/Voice-style events
-// (parsed from the Description), so these are omitted entirely for
-// "Someplace Else" events instead of showing as blank/Unknown.
-function extraDetails(record) {
-  const items = [];
-  if (record.duration) items.push({ emoji: EMOJI.duration, label: 'Duration', value: record.duration });
-  if (record.meal) items.push({ emoji: EMOJI.meal, label: 'Meal', value: record.meal });
-  if (record.cabinClasses) items.push({ emoji: EMOJI.cabinClasses, label: 'Cabin Classes', value: record.cabinClasses });
-  return items;
-}
-
 function flightEmbed(record) {
-  const fields = [
-    { name: `${EMOJI.route} Route`, value: `${record.origin} to ${record.destination}`, inline: false },
-    { name: `${EMOJI.departure} Departure time`, value: record.scheduledStart ? discordTimestamp(record.scheduledStart) : 'Unknown', inline: true },
-    { name: `${EMOJI.aircraft} Aircraft`, value: record.aircraft, inline: true },
-  ];
-  for (const detail of extraDetails(record)) {
-    fields.push({ name: `${detail.emoji} ${detail.label}`, value: detail.value, inline: true });
-  }
-
   const embed = new EmbedBuilder()
     .setTitle(`${EMOJI.header} Flight ${record.flightNumber}`)
-    .addFields(fields)
+    .addFields(
+      { name: `${EMOJI.route} Route`, value: `${record.origin} to ${record.destination}`, inline: false },
+      { name: `${EMOJI.departure} Departure time`, value: record.scheduledStart ? discordTimestamp(record.scheduledStart) : 'Unknown', inline: true },
+      { name: `${EMOJI.aircraft} Aircraft`, value: record.aircraft, inline: true },
+    )
     .setFooter({ text: `Created by ${record.creatorTag}` })
     .setColor(record.status === GuildScheduledEventStatus.Canceled ? 0x8a8f98 : BOARD_COLOR);
 
@@ -84,10 +65,7 @@ function boardEmbed(events, date = new Date(), imageUrl = null) {
         (isDelayed(e) ? `${EMOJI.delayed} Delayed\n` : '') +
         `${EMOJI.route} Route: ${e.origin} to ${e.destination}\n` +
         `${EMOJI.departure} Departure time: ${discordTimestamp(e.scheduledStart)}\n` +
-        `${EMOJI.aircraft} Aircraft: ${e.aircraft}` +
-        extraDetails(e)
-          .map((d) => `\n${d.emoji} ${d.label}: ${d.value}`)
-          .join(''),
+        `${EMOJI.aircraft} Aircraft: ${e.aircraft}`,
       inline: false,
     })),
   );
