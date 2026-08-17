@@ -1,0 +1,15 @@
+{
+  "name": "flight-board-bot",
+  "version": "1.0.0",
+  "description": "Discord bot that turns a server's native Scheduled Events into a live, per-server flight board",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "deploy": "node src/deploy-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5"
+  }
+}
