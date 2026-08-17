@@ -9,14 +9,33 @@ independent board and flight list, set up separately with its own `/board setup`
 
 People don't run bot commands to add flights — they use Discord's built-in **Events** creator
 (the calendar icon in a channel / server). The bot watches for scheduled events and maps their
-fields to flight info:
+fields to flight info. The mapping depends on the event's location type:
+
+**Someplace Else events** (Discord's label for what the API calls "External" — has a free-text
+Location field):
 
 | Discord event field | Used as       |
 |----------------------|----------------|
 | Name                 | Flight number  |
-| Location (event type: **External**) | Route, e.g. `JFK → LAX` (also accepts `JFK-LAX` / `JFK to LAX`) |
+| Location             | Route, e.g. `JFK → LAX` (also accepts `JFK-LAX` / `JFK to LAX`) |
 | Description           | Aircraft type  |
 | Start time             | Flight time    |
+
+**Stage Channel / Voice Channel events** (no Location field, so both route and aircraft go in
+Description as labeled lines):
+
+| Discord event field | Used as       |
+|----------------------|----------------|
+| Name                 | Flight number  |
+| Description, line starting with `Route:`     | Route, e.g. `Route: JFK to LAX` |
+| Description, line starting with `Aircraft:`  | Aircraft type, e.g. `Aircraft: B738` |
+| Start time             | Flight time    |
+
+Example Description for a Stage event:
+```
+Route: YYZ to CLE
+Aircraft: Embraer 175
+```
 
 The board is **one message**, not one message per flight, titled with today's date (e.g.
 "📅 16th August") and only listing flights scheduled for **today** (UTC). Flights get no marker
@@ -82,8 +101,9 @@ server permission by default (see setup below).
 7. In each server, in the channel you want to use as that server's flight board, run
    `/board setup`. This binds that server's board to that channel and posts the initial (empty)
    dropdown. Every server does this independently.
-8. Create a Server Event (Scheduled Event) with type **External**, using the field mapping
-   above. The bot will post it automatically to that server's board.
+8. Create a Server Event (Scheduled Event), either "Someplace Else" or Stage/Voice Channel type,
+   using the matching field mapping above. The bot will post it automatically to that server's
+   board.
 
 ## Notes
 
