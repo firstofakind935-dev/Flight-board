@@ -10,17 +10,19 @@ async function refreshBoard(client, guildId) {
 
   const now = new Date();
   const events = getTodaysActiveEvents(guildId, now);
-
-  if (board.messageId) {
-    const old = await channel.messages.fetch(board.messageId).catch(() => null);
-    if (old) await old.delete().catch(() => {});
-  }
-
-  const sent = await channel.send({
+  const payload = {
     embeds: [boardEmbed(events, now, process.env.BOARD_IMAGE_URL || null)],
     components: [boardSelectMenu(events)],
-  });
-  store.setBoard(guildId, channel.id, sent.id);
+  };
+
+  const existing = board.messageId ? await channel.messages.fetch(board.messageId).catch(() => null) : null;
+
+  if (existing) {
+    await existing.edit(payload);
+  } else {
+    const sent = await channel.send(payload);
+    store.setBoard(guildId, channel.id, sent.id);
+  }
 }
 
 module.exports = { refreshBoard };

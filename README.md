@@ -43,9 +43,11 @@ The board is **one message**, not one message per flight, titled with today's da
 "📅 16th August") and only listing flights scheduled for **today** (UTC). Flights get no marker
 while scheduled or in progress; if a flight's start time gets pushed later than when it was first
 posted, it's flagged delayed; once a flight's status is completed or cancelled, it drops off the
-board entirely. Whenever an event is created, updated, or deleted/cancelled, the bot updates its
-internal list and re-posts that single message so it stays at the bottom of the channel. It also
-rolls the board over automatically at the next UTC day even if nothing else changes.
+board entirely. Whenever an event is created, updated, or deleted/cancelled, the bot edits that
+same message in place — the message ID never changes, so it doesn't jump to the bottom of the
+channel or flash on every update. (It only ever creates a new message if the old one no longer
+exists — e.g. someone deleted it manually, or `/board setup` was just run for the first time.) It
+also rolls the board over automatically at the next UTC day even if nothing else changes.
 
 All icons live in one place (`EMOJI` in `src/lib/embeds.js`) and are wired to real custom server
 emoji codes — Discord only renders a custom emoji from bot-sent content if you paste the real
