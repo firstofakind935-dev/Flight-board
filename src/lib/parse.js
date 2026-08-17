@@ -16,17 +16,31 @@ function parseRoute(location) {
   return { origin: location.trim(), destination: 'Unknown' };
 }
 
-// For Stage/Voice events (no Location field), the route and aircraft are
-// both written as labeled lines in the Description instead, e.g.:
-//   Route: YYZ to CLE
-//   Aircraft: Embraer 175
+function extractLabeledLine(description, label) {
+  const match = description.match(new RegExp(`${label}\\s*:\\s*(.+)`, 'i'));
+  return match ? match[1].trim() : null;
+}
+
+// For Stage/Voice events (no Location field), everything comes from labeled
+// lines in the Description instead, e.g.:
+//   Flight Number: KE 497
+//   Departing: Seoul (ICN), South Korea
+//   Arriving: Delhi (DEL), India
+//   Aircraft: B787-9 Dreamliner
+//   Duration: 7H 45M
+//   Meal: Lunch
+//   Cabin Classes: Economy & Business
+// (Flight Number is read from the event's Name field regardless, so that
+// line is optional/purely informational if included.)
 function parseDescriptionFields(description) {
-  if (!description) return { route: null, aircraft: null };
-  const routeMatch = description.match(/route\s*:\s*(.+)/i);
-  const aircraftMatch = description.match(/aircraft\s*:\s*(.+)/i);
+  if (!description) return {};
   return {
-    route: routeMatch ? routeMatch[1].trim() : null,
-    aircraft: aircraftMatch ? aircraftMatch[1].trim() : null,
+    departing: extractLabeledLine(description, 'Departing'),
+    arriving: extractLabeledLine(description, 'Arriving'),
+    aircraft: extractLabeledLine(description, 'Aircraft'),
+    duration: extractLabeledLine(description, 'Duration'),
+    meal: extractLabeledLine(description, 'Meal'),
+    cabinClasses: extractLabeledLine(description, 'Cabin Classes'),
   };
 }
 
@@ -36,16 +50,23 @@ function toRecord(discordEvent) {
   let origin;
   let destination;
   let aircraft;
+  let duration = null;
+  let meal = null;
+  let cabinClasses = null;
 
   if (location) {
-    // External event: Location holds the route, Description is just the aircraft.
+    // "Someplace Else" event: Location holds the route, Description is just the aircraft.
     ({ origin, destination } = parseRoute(location));
     aircraft = discordEvent.description?.trim() || 'Unknown';
   } else {
-    // Stage/Voice event: no Location field, so both come from the Description.
+    // Stage/Voice event: everything comes from labeled Description lines.
     const parsed = parseDescriptionFields(discordEvent.description);
-    ({ origin, destination } = parseRoute(parsed.route));
+    origin = parsed.departing || 'Unknown';
+    destination = parsed.arriving || 'Unknown';
     aircraft = parsed.aircraft || 'Unknown';
+    duration = parsed.duration;
+    meal = parsed.meal;
+    cabinClasses = parsed.cabinClasses;
   }
 
   return {
@@ -55,6 +76,9 @@ function toRecord(discordEvent) {
     origin,
     destination,
     aircraft,
+    duration,
+    meal,
+    cabinClasses,
     scheduledStart: discordEvent.scheduledStartAt ? discordEvent.scheduledStartAt.toISOString() : null,
     status: discordEvent.status,
     creatorTag: discordEvent.creator?.username || 'Unknown',

@@ -21,21 +21,33 @@ Location field):
 | Description           | Aircraft type  |
 | Start time             | Flight time    |
 
-**Stage Channel / Voice Channel events** (no Location field, so both route and aircraft go in
-Description as labeled lines):
+**Stage Channel / Voice Channel events** (no Location field, so everything but the flight number
+and start time goes in Description as labeled lines):
 
 | Discord event field | Used as       |
 |----------------------|----------------|
 | Name                 | Flight number  |
-| Description, line starting with `Route:`     | Route, e.g. `Route: JFK to LAX` |
-| Description, line starting with `Aircraft:`  | Aircraft type, e.g. `Aircraft: B738` |
+| Description, `Departing:` line     | Route origin |
+| Description, `Arriving:` line      | Route destination |
+| Description, `Aircraft:` line      | Aircraft type |
+| Description, `Duration:` line      | Flight duration (optional) |
+| Description, `Meal:` line          | Meal service (optional) |
+| Description, `Cabin Classes:` line | Cabin classes (optional) |
 | Start time             | Flight time    |
 
 Example Description for a Stage event:
 ```
-Route: YYZ to CLE
-Aircraft: Embraer 175
+Flight Number: KE 497
+Departing: Seoul (ICN), South Korea
+Arriving: Delhi (DEL), India
+Aircraft: B787-9 Dreamliner
+Duration: 7H 45M
+Meal: Lunch
+Cabin Classes: Economy & Business
 ```
+(The `Flight Number:` line is optional/informational — the flight number is always taken from the
+event's Name field. `Duration`, `Meal`, and `Cabin Classes` are optional; if omitted, those rows
+just don't appear on the board or in the flight details.)
 
 The board is **one message**, not one message per flight, titled with today's date (e.g.
 "📅 16th August") and only listing flights scheduled for **today** (UTC). Flights get no marker
