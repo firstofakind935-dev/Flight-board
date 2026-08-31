@@ -14,13 +14,17 @@ for (const file of fs.readdirSync(commandsPath).filter((f) => f.endsWith('.js'))
   const command = require(path.join(commandsPath, file));
   client.commands.set(command.data.name, command);
 }
+console.log(`Loaded ${client.commands.size} command(s): ${[...client.commands.keys()].join(', ') || '(none)'}`);
 
 const eventsPath = path.join(__dirname, 'events');
+const loadedEvents = [];
 for (const file of fs.readdirSync(eventsPath).filter((f) => f.endsWith('.js'))) {
   const evt = require(path.join(eventsPath, file));
   const handler = evt.execute.bind(null, client);
   if (evt.once) client.once(evt.name, handler);
   else client.on(evt.name, handler);
+  loadedEvents.push(evt.name);
 }
+console.log(`Loaded ${loadedEvents.length} event handler(s): ${loadedEvents.join(', ') || '(none)'}`);
 
 client.login(process.env.DISCORD_TOKEN);
