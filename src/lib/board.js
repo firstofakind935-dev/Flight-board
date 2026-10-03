@@ -3,16 +3,35 @@ const { boardEmbed, boardSelectMenu } = require('./embeds');
 const { getTodaysActiveEvents } = require('./flights');
 const { refreshPanel } = require('./panel');
 
-// Only pass through a real http(s) link — anything else makes Discord reject
-// the whole board message.
-function boardImageUrl() {
-  const url = process.env.BOARD_IMAGE_URL?.trim();
-  if (!url) return null;
-  if (!/^https?:\/\/\S+$/i.test(url)) {
-    console.warn('Ignoring BOARD_IMAGE_URL: it must be a direct http(s) link to an image.');
-    return null;
-  }
-  return url;
+const DEFAULT_ROTATE_MINUTES = 5;
+
+// BOARD_IMAGE_URL holds one banner link, or several separated by commas to
+// rotate through them as a slideshow. Only real http(s) links are kept —
+// anything else makes Discord reject the whole board message.
+function boardImageUrls() {
+  const raw = process.env.BOARD_IMAGE_URL || '';
+  return raw
+    .split(',')
+    .map((u) => u.trim())
+    .filter(Boolean)
+    .filter((u) => {
+      const ok = /^https?:\/\/\S+$/i.test(u);
+      if (!ok) console.warn(`Ignoring banner "${u}": it must be a direct http(s) link to an image.`);
+      return ok;
+    });
+}
+
+function rotateIntervalMs() {
+  const minutes = Number(process.env.BOARD_IMAGE_INTERVAL_MINUTES);
+  return (Number.isFinite(minutes) && minutes >= 1 ? minutes : DEFAULT_ROTATE_MINUTES) * 60 * 1000;
+}
+
+// Every board shows the same slide at the same time: the slide is picked
+// from the clock, not from a counter, so restarts don't reset it.
+function boardImageUrl(now = new Date()) {
+  const urls = boardImageUrls();
+  if (urls.length === 0) return null;
+  return urls[Math.floor(now.getTime() / rotateIntervalMs()) % urls.length];
 }
 
 async function refreshBoardMessage(client, guildId) {
@@ -27,7 +46,7 @@ async function refreshBoardMessage(client, guildId) {
   const now = new Date();
   const events = getTodaysActiveEvents(guildId, now);
   const payload = {
-    embeds: [boardEmbed(events, now, boardImageUrl())],
+    embeds: [boardEmbed(events, now, boardImageUrl(now))],
     components: [boardSelectMenu(events)],
   };
 
@@ -48,4 +67,4 @@ async function refreshBoard(client, guildId) {
   await refreshPanel(client, guildId).catch((err) => console.error(`Panel refresh failed for guild ${guildId}:`, err));
 }
 
-module.exports = { refreshBoard };
+module.exports = { refreshBoard, refreshBoardMessage, boardImageUrls, rotateIntervalMs };

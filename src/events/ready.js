@@ -2,7 +2,7 @@ const { Events } = require('discord.js');
 const store = require('../lib/store');
 const { toRecord } = require('../lib/parse');
 const { refreshBoard } = require('../lib/board');
-const { startDailyRefresh } = require('../lib/scheduler');
+const { startDailyRefresh, startBannerRotation } = require('../lib/scheduler');
 
 module.exports = {
   name: Events.ClientReady,
@@ -21,6 +21,7 @@ module.exports = {
       await refreshBoard(client, guild.id);
     }
     startDailyRefresh(client);
+    startBannerRotation(client);
     console.log(`Logged in as ${client.user.tag}`);
   },
 };

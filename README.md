@@ -97,7 +97,10 @@ event itself, and the board refreshes automatically.
      invited to. Only set it during local development to register commands instantly in one test
      server — a value here restricts commands to that single server.
    - `BOARD_IMAGE_URL` — (optional) a direct image URL shown as a banner at the bottom of every
-     server's board embed
+     server's board embed. For a slideshow, list several links separated by commas — the board
+     switches to the next one on a timer.
+   - `BOARD_IMAGE_INTERVAL_MINUTES` — (optional) how often the slideshow advances, in minutes
+     (default 5, minimum 1). Ignored with a single banner.
 4. Install dependencies:
    ```
    npm install
