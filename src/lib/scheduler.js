@@ -32,7 +32,7 @@ function startBannerRotation(client) {
     tick();
     setInterval(tick, interval);
   }, interval - (Date.now() % interval) + 1000);
-  console.log(`Rotating ${boardImageUrls().length} banners every ${interval / 60000} minute(s).`);
+  console.log(`Rotating ${boardImageUrls().length} banners every ${interval / 1000} seconds.`);
 }
 
 module.exports = { startDailyRefresh, startBannerRotation };

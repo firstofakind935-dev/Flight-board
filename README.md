@@ -101,6 +101,8 @@ event itself, and the board refreshes automatically.
      switches to the next one on a timer.
    - `BOARD_IMAGE_INTERVAL_MINUTES` — (optional) how often the slideshow advances, in minutes
      (default 5, minimum 1). Ignored with a single banner.
+   - `BOARD_IMAGE_INTERVAL_SECONDS` — (optional) the same, in seconds (e.g. `30`, minimum 10).
+     Takes priority over `BOARD_IMAGE_INTERVAL_MINUTES` when set.
 4. Install dependencies:
    ```
    npm install

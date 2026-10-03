@@ -21,7 +21,15 @@ function boardImageUrls() {
     });
 }
 
+const MIN_ROTATE_SECONDS = 10;
+
+// BOARD_IMAGE_INTERVAL_SECONDS wins if set; otherwise BOARD_IMAGE_INTERVAL_MINUTES.
+// Floored at 10 seconds so the bot doesn't hammer Discord with edits.
 function rotateIntervalMs() {
+  const seconds = Number(process.env.BOARD_IMAGE_INTERVAL_SECONDS);
+  if (process.env.BOARD_IMAGE_INTERVAL_SECONDS && Number.isFinite(seconds)) {
+    return Math.max(seconds, MIN_ROTATE_SECONDS) * 1000;
+  }
   const minutes = Number(process.env.BOARD_IMAGE_INTERVAL_MINUTES);
   return (Number.isFinite(minutes) && minutes >= 1 ? minutes : DEFAULT_ROTATE_MINUTES) * 60 * 1000;
 }
