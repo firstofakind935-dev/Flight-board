@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { getTodaysActiveEvents } = require('../lib/flights');
+const { delayFlight } = require('../lib/actions');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -38,15 +39,7 @@ module.exports = {
     }
 
     await interaction.deferReply({ ephemeral: true });
-    const newStart = new Date(new Date(target.scheduledStart).getTime() + minutes * 60 * 1000);
-    try {
-      await interaction.guild.scheduledEvents.edit(target.id, { scheduledStartTime: newStart });
-      await interaction.editReply(`✅ Delayed flight ${target.flightNumber} by ${minutes} minute${minutes === 1 ? '' : 's'}.`);
-    } catch (err) {
-      console.error('Failed to delay scheduled event:', err);
-      await interaction.editReply(
-        `⚠️ Couldn't delay ${target.flightNumber} — Discord rejected the change. Make sure the bot has the "Manage Events" permission in this server.`,
-      );
-    }
+    const result = await delayFlight(interaction.guild, target, minutes);
+    await interaction.editReply(result.message);
   },
 };

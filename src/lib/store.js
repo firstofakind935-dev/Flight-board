@@ -4,6 +4,7 @@ const path = require('path');
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
 const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
 const BOARDS_FILE = path.join(DATA_DIR, 'boards.json');
+const PANELS_FILE = path.join(DATA_DIR, 'panels.json');
 
 function readJson(file, fallback) {
   if (!fs.existsSync(file)) return fallback;
@@ -66,6 +67,22 @@ function getBoardGuildIds() {
   return Object.keys(readJson(BOARDS_FILE, {}));
 }
 
+// Staff control panel, one per guild, stored the same way as boards.
+function getPanel(guildId) {
+  const panels = readJson(PANELS_FILE, {});
+  return panels[guildId] || null;
+}
+
+function setPanel(guildId, channelId, messageId) {
+  const panels = readJson(PANELS_FILE, {});
+  panels[guildId] = { channelId, messageId };
+  writeJson(PANELS_FILE, panels);
+}
+
+function getPanelGuildIds() {
+  return Object.keys(readJson(PANELS_FILE, {}));
+}
+
 module.exports = {
   getEvents,
   getEventsByGuild,
@@ -75,4 +92,7 @@ module.exports = {
   getBoard,
   setBoard,
   getBoardGuildIds,
+  getPanel,
+  setPanel,
+  getPanelGuildIds,
 };

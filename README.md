@@ -3,7 +3,7 @@
 A Discord bot that turns a server's native **Scheduled Events** into a live flight board: a
 single message listing every flight, with a dropdown at the bottom to pull up any one flight's
 full details. One bot install can run in any number of servers — each server gets its own
-independent board and flight list, set up separately with its own `/board setup`.
+independent board and flight list, set up separately with its own `/setup`.
 
 ## How it works
 
@@ -46,7 +46,7 @@ posted, it's flagged delayed; once a flight's status is completed or cancelled, 
 board entirely. Whenever an event is created, updated, or deleted/cancelled, the bot edits that
 same message in place — the message ID never changes, so it doesn't jump to the bottom of the
 channel or flash on every update. (It only ever creates a new message if the old one no longer
-exists — e.g. someone deleted it manually, or `/board setup` was just run for the first time.) It
+exists — e.g. someone deleted it manually, or `/setup` was just run for the first time.) It
 also rolls the board over automatically at the next UTC day even if nothing else changes.
 
 All icons live in one place (`EMOJI` in `src/lib/embeds.js`) and are wired to real custom server
@@ -57,27 +57,39 @@ Picking a flight from the dropdown replies with that flight's full embed, visibl
 Departure times are shown as fixed 24-hour UTC times (e.g. `09:00 UTC`), the same for every
 viewer. The board lists flights three to a row.
 
-## Cancelling and delaying flights
+## Commands
 
-Two admin-only commands edit the real Discord Scheduled Event directly (not just the board), so
-the change also shows up if you open the event itself:
+| Command | Who can use it | What it does |
+|---|---|---|
+| `/setup` | Manage Server | Posts the flight board in the current channel. |
+| `/addflight number route time aircraft [date]` | Manage Events | Adds a flight. `time` is 24h UTC (`14:30`), `route` like `DEL → JFK`, `date` is optional (`YYYY-MM-DD`, defaults to today). |
+| `/delay flight minutes` | Manage Events | Pushes a flight's departure back. `flight` autocompletes from today's flights. |
+| `/panel [channel]` | Manage Server | Posts the staff control panel in the given channel (or the current one). |
 
-- `/cancel flight:<pick from list>` — sets the event's status to cancelled.
-- `/delay flight:<pick from list> minutes:<number>` — pushes the event's start time back by that
-  many minutes.
+`/addflight` creates a real "Someplace Else" Discord event using the same field mapping as above,
+so a flight added by command behaves exactly like one created by hand.
 
-Both `flight` options autocomplete from that server's currently active flights as you type. Since
-these edit the event through Discord's API, Discord broadcasts the change back to the bot the same
-way it would for a manual edit — the existing update handling picks it up, refreshes the board, and
-(for delays) shows the delayed marker automatically. Both commands require the **Manage Events**
-server permission by default (see setup below).
+### Staff control panel
+
+`/panel` posts a message — ideally in a private staff channel — listing today's flights, with:
+
+- a **flight dropdown**: pick a flight to see its details with **Delay** (asks for minutes) and
+  **Cancel flight** (asks for confirmation) buttons, and
+- an **Add flight** button that opens a form (number, route, time, aircraft, optional date).
+
+The panel updates itself alongside the board. Only members with **Manage Events** can use it, even
+if others can see the channel. Running `/panel` again in another channel moves it there.
+
+All flight changes edit the real Discord Scheduled Event, so they also show up if you open the
+event itself, and the board refreshes automatically.
 
 ## Setup
 
 1. Create a Discord application + bot at https://discord.com/developers/applications.
 2. Invite it to your server with the `bot` and `applications.commands` scopes, and permissions:
-   View Channel, Send Messages, Embed Links, **Manage Events** (required for `/cancel` and
-   `/delay` to edit scheduled events).
+   View Channel, Send Messages, Embed Links, **Manage Events** (required to add, delay and cancel flights
+   `/delay` to edit scheduled events), Read Message History, and Use External Emojis (if your custom
+   emoji live in another server).
 3. Copy `.env.example` to `.env` and fill in:
    - `DISCORD_TOKEN` — your bot token
    - `CLIENT_ID` — your application ID
@@ -94,7 +106,7 @@ server permission by default (see setup below).
    ```
    npm run deploy
    ```
-   Without `GUILD_ID` set, this registers `/board`, `/cancel`, and `/delay` globally — it can take
+   Without `GUILD_ID` set, this registers `/setup`, `/addflight`, `/delay`, and `/panel` globally — it can take
    up to an hour to show up in a server the first time, but then works in every server the bot is
    invited to. Deploying to a host like Railway does **not** run this automatically — it's a
    separate one-off step you run yourself whenever the command list changes.
@@ -103,10 +115,10 @@ server permission by default (see setup below).
    npm start
    ```
 7. In each server, in the channel you want to use as that server's flight board, run
-   `/board setup`. This binds that server's board to that channel and posts the initial (empty)
+   `/setup`. Optionally run `/panel channel:#staff-channel` to post the staff control panel. This binds that server's board to that channel and posts the initial (empty)
    dropdown. Every server does this independently.
-8. Create a Server Event (Scheduled Event), either "Someplace Else" or Stage/Voice Channel type,
-   using the matching field mapping above. The bot will post it automatically to that server's
+8. Add flights with `/addflight`, the panel's **Add flight** button, or by creating a Server Event
+   ("Someplace Else" or Stage/Voice Channel type) using the matching field mapping above. The bot will post it automatically to that server's
    board.
 
 ## Notes

@@ -10,7 +10,8 @@ function startDailyRefresh(client) {
     const now = new Date();
     if (isSameUtcDay(now, lastDate)) return;
     lastDate = now;
-    for (const guildId of store.getBoardGuildIds()) {
+    const guildIds = new Set([...store.getBoardGuildIds(), ...store.getPanelGuildIds()]);
+    for (const guildId of guildIds) {
       await refreshBoard(client, guildId).catch((err) => console.error(`Daily board refresh failed for guild ${guildId}:`, err));
     }
   }, CHECK_INTERVAL_MS);

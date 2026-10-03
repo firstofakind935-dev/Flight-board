@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const store = require('../lib/store');
 const { flightEmbed } = require('../lib/embeds');
+const { handlePanelInteraction } = require('../lib/panel');
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -26,6 +27,21 @@ module.exports = {
         const payload = { content: 'Something went wrong running that command.', ephemeral: true };
         if (interaction.deferred || interaction.replied) {
           await interaction.editReply(payload).catch(() => {});
+        } else {
+          await interaction.reply(payload).catch(() => {});
+        }
+      }
+      return;
+    }
+
+    if (interaction.customId?.startsWith('panel_')) {
+      try {
+        await handlePanelInteraction(interaction);
+      } catch (err) {
+        console.error(err);
+        const payload = { content: 'Something went wrong with that panel action.', ephemeral: true };
+        if (interaction.deferred || interaction.replied) {
+          await interaction.followUp(payload).catch(() => {});
         } else {
           await interaction.reply(payload).catch(() => {});
         }
