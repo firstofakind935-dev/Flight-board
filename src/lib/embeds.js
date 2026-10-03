@@ -2,7 +2,11 @@ const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, GuildScheduledE
 const { formatBoardDate, discordTimestamp } = require('./dates');
 
 const MAX_SELECT_OPTIONS = 25;
-const BOARD_COLOR = 0x9dd9e5;
+// Air India brand palette
+const BOARD_COLOR = 0xda0e29; // Air India red
+const DELAYED_COLOR = 0xc8a24a; // Air India gold
+const CANCELLED_COLOR = 0x8a8f98;
+const BRAND = 'Air India';
 
 const EMOJI = {
   date: '<:Emoji20:1538217782234062878>',
@@ -21,17 +25,24 @@ function isDelayed(record) {
 
 function flightEmbed(record) {
   const embed = new EmbedBuilder()
+    .setAuthor({ name: BRAND })
     .setTitle(`${EMOJI.header} Flight ${record.flightNumber}`)
     .addFields(
       { name: `${EMOJI.route} Route`, value: `${record.origin} to ${record.destination}`, inline: false },
       { name: `${EMOJI.departure} Departure time`, value: record.scheduledStart ? discordTimestamp(record.scheduledStart) : 'Unknown', inline: true },
       { name: `${EMOJI.aircraft} Aircraft`, value: record.aircraft, inline: true },
     )
-    .setFooter({ text: `Created by ${record.creatorTag}` })
-    .setColor(record.status === GuildScheduledEventStatus.Canceled ? 0x8a8f98 : BOARD_COLOR);
+    .setFooter({ text: `${BRAND} • Created by ${record.creatorTag}` })
+    .setColor(
+      record.status === GuildScheduledEventStatus.Canceled
+        ? CANCELLED_COLOR
+        : isDelayed(record)
+          ? DELAYED_COLOR
+          : BOARD_COLOR,
+    );
 
   if (record.status === GuildScheduledEventStatus.Canceled) {
-    embed.setDescription(`${EMOJI.cancelled} This event was cancelled.`);
+    embed.setDescription(`${EMOJI.cancelled} We regret to inform you that this flight has been cancelled.`);
   } else if (isDelayed(record)) {
     embed.setDescription(`${EMOJI.delayed} Delayed`);
   }
@@ -42,18 +53,20 @@ function flightEmbed(record) {
 function boardEmbed(events, date = new Date(), imageUrl = null) {
   const dateLabel = formatBoardDate(date);
   const embed = new EmbedBuilder()
+    .setAuthor({ name: `${BRAND} Departures` })
     .setTitle(`${EMOJI.date} ${dateLabel}`)
+    .setFooter({ text: `Namaste and welcome aboard ${BRAND}` })
     .setColor(BOARD_COLOR);
 
   if (events.length === 0) {
-    embed.setDescription(`No flights are hosted on the ${dateLabel}.`);
+    embed.setDescription(`Namaste! There are no ${BRAND} flights scheduled for the ${dateLabel}.`);
     if (imageUrl) embed.setImage(imageUrl);
     return embed;
   }
 
   const shown = events.slice(0, MAX_SELECT_OPTIONS);
   embed.setDescription(
-    `Displayed flights are hosted on the ${dateLabel}. To check more information about a flight, select it on the display menu down below.` +
+    `Namaste! Here are today's ${BRAND} flights for the ${dateLabel}. To view more information about a flight, select it from the menu below.` +
       (events.length > MAX_SELECT_OPTIONS
         ? `\n\n_Showing ${MAX_SELECT_OPTIONS} of ${events.length} flights (dropdown limit)._`
         : ''),
@@ -78,7 +91,7 @@ function boardSelectMenu(events) {
   const shown = events.slice(0, MAX_SELECT_OPTIONS);
   const menu = new StringSelectMenuBuilder()
     .setCustomId('flight_board_select')
-    .setPlaceholder(shown.length ? 'Select a flight to view details…' : 'No flights available')
+    .setPlaceholder(shown.length ? 'Select an Air India flight to view details…' : 'No Air India flights available')
     .setDisabled(shown.length === 0)
     .addOptions(
       shown.length
