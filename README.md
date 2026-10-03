@@ -87,8 +87,8 @@ event itself, and the board refreshes automatically.
 
 1. Create a Discord application + bot at https://discord.com/developers/applications.
 2. Invite it to your server with the `bot` and `applications.commands` scopes, and permissions:
-   View Channel, Send Messages, Embed Links, **Manage Events** (required to add, delay and cancel flights
-   `/delay` to edit scheduled events), Read Message History, and Use External Emojis (if your custom
+   View Channel, Send Messages, Embed Links, **Manage Events** (required to add, delay and
+   cancel flights), Read Message History, and Use External Emojis (if your custom
    emoji live in another server).
 3. Copy `.env.example` to `.env` and fill in:
    - `DISCORD_TOKEN` — your bot token
