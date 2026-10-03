@@ -13,12 +13,12 @@
       "description": "Namaste! Here are today's Air India flights for the 3rd October.",
       "fields": [
         {
-          "name": "<:aipattern:1546929002420109353> AI 101",
+          "name": "<:AIC:1540256282957713438> AI 101",
           "value": "<:AI_Route:1540263390939709450> Route: Delhi (DEL) to New York (JFK)\n<:AI_Takeoff:1540249916323008512> Departure time: <t:1791037800:t>\n<:Ai_Plane:1540250013882384404> Aircraft: B777-300ER",
           "inline": false
         },
         {
-          "name": "<:aipattern:1546929002420109353> AI 131",
+          "name": "<:AIC:1540256282957713438> AI 131",
           "value": "<:Ai_delayed:1540250239741468692> Delayed\n<:AI_Route:1540263390939709450> Route: Mumbai (BOM) to London (LHR)\n<:AI_Takeoff:1540249916323008512> Departure time: <t:1791050400:t>\n<:Ai_Plane:1540250013882384404> Aircraft: A350-1000",
           "inline": false
         }

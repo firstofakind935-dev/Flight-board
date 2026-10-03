@@ -10,7 +10,7 @@ const BRAND = 'Air India';
 
 const EMOJI = {
   date: '<:AirIndialogo_1637374664622_16373:1540256329279475712>',
-  header: '<:aipattern:1546929002420109353>',
+  header: '<:AIC:1540256282957713438>',
   aircraft: '<:Ai_Plane:1540250013882384404>',
   route: '<:AI_Route:1540263390939709450>',
   departure: '<:AI_Takeoff:1540249916323008512>',
