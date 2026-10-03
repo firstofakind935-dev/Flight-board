@@ -9,13 +9,13 @@ const CANCELLED_COLOR = 0x8a8f98;
 const BRAND = 'Air India';
 
 const EMOJI = {
-  date: '<:Emoji20:1538217782234062878>',
-  header: '<:KE_Tail:1505248567290368172>',
-  aircraft: '<:Emoji29:1538218192324010035>',
-  route: '<:Emoji15:1538217589359120515>',
-  departure: '<:Emoji22:1538217910454063205>',
-  cancelled: '<:Emoji27:1538218104734220370>',
-  delayed: '<:Emoji28:1538218156475027476>',
+  date: '<:AirIndialogo_1637374664622_16373:1540256329279475712>',
+  header: '<:aipattern:1546929002420109353>',
+  aircraft: '<:Ai_Plane:1540250013882384404>',
+  route: '<:AI_Route:1540263390939709450>',
+  departure: '<:AI_Takeoff:1540249916323008512>',
+  cancelled: '<:AI_Cross:1540263520006840381>',
+  delayed: '<:Ai_delayed:1540250239741468692>',
 };
 
 function isDelayed(record) {

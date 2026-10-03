@@ -5,20 +5,20 @@
       "author": {
         "name": "Air India"
       },
-      "title": "<:KE_Tail:1505248567290368172> Flight AI 131",
+      "title": "<:aipattern:1546929002420109353> Flight AI 131",
       "fields": [
         {
-          "name": "<:Emoji15:1538217589359120515> Route",
+          "name": "<:AI_Route:1540263390939709450> Route",
           "value": "Mumbai (BOM) to London (LHR)",
           "inline": false
         },
         {
-          "name": "<:Emoji22:1538217910454063205> Departure time",
+          "name": "<:AI_Takeoff:1540249916323008512> Departure time",
           "value": "<t:1791050400:t>",
           "inline": true
         },
         {
-          "name": "<:Emoji29:1538218192324010035> Aircraft",
+          "name": "<:Ai_Plane:1540250013882384404> Aircraft",
           "value": "A350-1000",
           "inline": true
         }
@@ -27,7 +27,7 @@
         "text": "Air India • Created by Air India Ops"
       },
       "color": 13148746,
-      "description": "<:Emoji28:1538218156475027476> Delayed"
+      "description": "<:Ai_delayed:1540250239741468692> Delayed"
     }
   ],
   "attachments": []
