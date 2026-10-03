@@ -18,6 +18,14 @@ function discordTimestamp(isoString, style = 't') {
   return `<t:${unix}:${style}>`;
 }
 
+// Fixed 24h UTC time, e.g. "09:00 UTC" — the same text for every viewer.
+function formatUtcTime(isoString) {
+  const d = new Date(isoString);
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const mm = String(d.getUTCMinutes()).padStart(2, '0');
+  return `${hh}:${mm} UTC`;
+}
+
 function isSameUtcDay(a, b) {
   return (
     a.getUTCFullYear() === b.getUTCFullYear() &&
@@ -26,4 +34,4 @@ function isSameUtcDay(a, b) {
   );
 }
 
-module.exports = { formatBoardDate, discordTimestamp, isSameUtcDay };
+module.exports = { formatBoardDate, discordTimestamp, formatUtcTime, isSameUtcDay };

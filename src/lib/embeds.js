@@ -1,5 +1,5 @@
 const { EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder, GuildScheduledEventStatus } = require('discord.js');
-const { formatBoardDate, discordTimestamp } = require('./dates');
+const { formatBoardDate, formatUtcTime } = require('./dates');
 
 const MAX_SELECT_OPTIONS = 25;
 // Air India brand palette
@@ -29,7 +29,7 @@ function flightEmbed(record) {
     .setTitle(`${EMOJI.header} Flight ${record.flightNumber}`)
     .addFields(
       { name: `${EMOJI.route} Route`, value: `${record.origin} to ${record.destination}`, inline: false },
-      { name: `${EMOJI.departure} Departure time`, value: record.scheduledStart ? discordTimestamp(record.scheduledStart) : 'Unknown', inline: true },
+      { name: `${EMOJI.departure} Departure time`, value: record.scheduledStart ? formatUtcTime(record.scheduledStart) : 'Unknown', inline: true },
       { name: `${EMOJI.aircraft} Aircraft`, value: record.aircraft, inline: true },
     )
     .setFooter({ text: `${BRAND} • Created by ${record.creatorTag}` })
@@ -53,20 +53,18 @@ function flightEmbed(record) {
 function boardEmbed(events, date = new Date(), imageUrl = null) {
   const dateLabel = formatBoardDate(date);
   const embed = new EmbedBuilder()
-    .setAuthor({ name: `${BRAND} Departures` })
     .setTitle(`${EMOJI.date} ${dateLabel}`)
-    .setFooter({ text: `Namaste and welcome aboard ${BRAND}` })
     .setColor(BOARD_COLOR);
 
   if (events.length === 0) {
-    embed.setDescription(`Namaste! There are no ${BRAND} flights scheduled for the ${dateLabel}.`);
+    embed.setDescription(`No flights are hosted on the ${dateLabel}.`);
     if (imageUrl) embed.setImage(imageUrl);
     return embed;
   }
 
   const shown = events.slice(0, MAX_SELECT_OPTIONS);
   embed.setDescription(
-    `Namaste! Here are today's ${BRAND} flights for the ${dateLabel}. To view more information about a flight, select it from the menu below.` +
+    `Displayed flights are hosted on the ${dateLabel}. To check more information about a flight, select it on the display menu down below.` +
       (events.length > MAX_SELECT_OPTIONS
         ? `\n\n_Showing ${MAX_SELECT_OPTIONS} of ${events.length} flights (dropdown limit)._`
         : ''),
@@ -77,9 +75,9 @@ function boardEmbed(events, date = new Date(), imageUrl = null) {
       value:
         (isDelayed(e) ? `${EMOJI.delayed} Delayed\n` : '') +
         `${EMOJI.route} Route: ${e.origin} to ${e.destination}\n` +
-        `${EMOJI.departure} Departure time: ${discordTimestamp(e.scheduledStart)}\n` +
+        `${EMOJI.departure} Departure time: ${formatUtcTime(e.scheduledStart)}\n` +
         `${EMOJI.aircraft} Aircraft: ${e.aircraft}`,
-      inline: false,
+      inline: true,
     })),
   );
 
@@ -91,7 +89,7 @@ function boardSelectMenu(events) {
   const shown = events.slice(0, MAX_SELECT_OPTIONS);
   const menu = new StringSelectMenuBuilder()
     .setCustomId('flight_board_select')
-    .setPlaceholder(shown.length ? 'Select an Air India flight to view details…' : 'No Air India flights available')
+    .setPlaceholder(shown.length ? 'Select a flight to view details…' : 'No flights available')
     .setDisabled(shown.length === 0)
     .addOptions(
       shown.length

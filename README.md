@@ -54,8 +54,8 @@ emoji codes — Discord only renders a custom emoji from bot-sent content if you
 `<:name:id>` code (typing a bare `:name:` won't render).
 
 Picking a flight from the dropdown replies with that flight's full embed, visible only to you.
-Departure times use Discord's `<t:unix:t>` timestamp tag, so each viewer sees the time rendered
-in their own local timezone automatically — no timezone handling needed on the bot's side.
+Departure times are shown as fixed 24-hour UTC times (e.g. `09:00 UTC`), the same for every
+viewer. The board lists flights three to a row.
 
 ## Cancelling and delaying flights
 
