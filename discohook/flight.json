@@ -1,0 +1,34 @@
+{
+  "content": null,
+  "embeds": [
+    {
+      "author": {
+        "name": "Air India"
+      },
+      "title": "<:KE_Tail:1505248567290368172> Flight AI 131",
+      "fields": [
+        {
+          "name": "<:Emoji15:1538217589359120515> Route",
+          "value": "Mumbai (BOM) to London (LHR)",
+          "inline": false
+        },
+        {
+          "name": "<:Emoji22:1538217910454063205> Departure time",
+          "value": "<t:1791050400:t>",
+          "inline": true
+        },
+        {
+          "name": "<:Emoji29:1538218192324010035> Aircraft",
+          "value": "A350-1000",
+          "inline": true
+        }
+      ],
+      "footer": {
+        "text": "Air India • Created by Air India Ops"
+      },
+      "color": 13148746,
+      "description": "<:Emoji28:1538218156475027476> Delayed"
+    }
+  ],
+  "attachments": []
+}

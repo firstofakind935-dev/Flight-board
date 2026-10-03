@@ -1,0 +1,29 @@
+{
+  "content": null,
+  "embeds": [
+    {
+      "author": {
+        "name": "Air India Departures"
+      },
+      "title": "<:Emoji20:1538217782234062878> 3rd October",
+      "footer": {
+        "text": "Namaste and welcome aboard Air India"
+      },
+      "color": 14290473,
+      "description": "Namaste! Here are today's Air India flights for the 3rd October.",
+      "fields": [
+        {
+          "name": "<:KE_Tail:1505248567290368172> AI 101",
+          "value": "<:Emoji15:1538217589359120515> Route: Delhi (DEL) to New York (JFK)\n<:Emoji22:1538217910454063205> Departure time: <t:1791037800:t>\n<:Emoji29:1538218192324010035> Aircraft: B777-300ER",
+          "inline": false
+        },
+        {
+          "name": "<:KE_Tail:1505248567290368172> AI 131",
+          "value": "<:Emoji28:1538218156475027476> Delayed\n<:Emoji15:1538217589359120515> Route: Mumbai (BOM) to London (LHR)\n<:Emoji22:1538217910454063205> Departure time: <t:1791050400:t>\n<:Emoji29:1538218192324010035> Aircraft: A350-1000",
+          "inline": false
+        }
+      ]
+    }
+  ],
+  "attachments": []
+}
